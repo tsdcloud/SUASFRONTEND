@@ -1,0 +1,53 @@
+{
+  "name": "suas2.2",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 192.168.1.125",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.4.0",
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@heroicons/react": "^2.1.5",
+    "@nextui-org/react": "^2.4.2",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "antd": "^5.17.4",
+    "date-fns": "^3.6.0",
+    "dotenv": "^16.4.5",
+    "framer-motion": "^11.2.12",
+    "lottie-react": "^2.4.0",
+    "mediasoup-client": "^3.7.16",
+    "mkcert": "^3.2.0",
+    "moment": "^2.30.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-draggable": "^4.4.6",
+    "react-hot-toast": "^2.4.1",
+    "react-router-dom": "^6.23.1",
+    "react-scripts": "^5.0.1",
+    "socket.io-client": "^4.7.5",
+    "uuid": "^10.0.0",
+    "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.6",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.11",
+    "vite": "^5.2.0"
+  }
+}
