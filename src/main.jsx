@@ -8,3 +8,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <App />
     </AuthProvider>
 )
+console.log("All env vars:", import.meta.env);

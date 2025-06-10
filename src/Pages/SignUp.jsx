@@ -8,6 +8,10 @@ import Preloader from '../Components/Preloader';
 import LogoutLayout from '../Layout/LogoutLayout';
 import { ArrowRightIcon } from '@heroicons/react/16/solid';
 
+
+console.log(`${import.meta.env.VITE_EVENTS_API}`);
+console.log(`${process.env.VITE_EVENTS_API}`);
+//console.log(import.meta.env); // Inspect ALL loaded env vars
 function SignUp() {
     document.title = "Créer votre compte"
 
@@ -83,6 +87,7 @@ function SignUp() {
       "password":password
     }
     // console.log(data)
+    console.log(`${import.meta.env.VITE_EVENTS_API}`);
     const url = `${import.meta.env.VITE_EVENTS_API}/users/register`
     setIsLoading(true);
     try {

@@ -15,6 +15,9 @@ import SignUp from './Pages/SignUp'
 import CreateEvent from './Pages/CreateEvent'
 import CreateWorkshop from './Pages/CreateWorkshop'
 
+console.log(process.env)
+console.log("All env vars:", import.meta.env);
+
 function App() {
   return (
     <Router>
