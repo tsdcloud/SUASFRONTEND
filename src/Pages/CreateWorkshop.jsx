@@ -1,370 +1,476 @@
-import React, { useState, useRef, useEffect, useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Modal, DatePicker, AutoComplete } from 'antd';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { useFetch } from "../hooks/useFetch";
+import React, { useState, useRef, useEffect } from "react";
 import toast, { Toaster } from 'react-hot-toast';
-import { AUTHCONTEXT } from "../context/AuthProvider";
+import { useFetch } from "../hooks/useFetch";
+import { useParams, useNavigate } from "react-router-dom";
+import { Modal, DatePicker, AutoComplete } from 'antd';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import dayjs from 'dayjs';
 
-function CreateWorkshop() {
-    const { id } = useParams();
-  // console.log("event Id :",id)
- document.title = "Créer un atélier"
 
- const { handlePost, handleFetch, err, setErr, handlePostFile } = useFetch()
-  const { userData } = useContext(AUTHCONTEXT)
+const CreateWorkshop = ({ onSuccess, idEvent, event }) => {
+  // const { id } = useParams();
+  // document.title = "Créer un atelier";
 
-  const [idUser, setIdUser] = useState(userData)
-  const [inputName, setInputName] = useState()
-  const [inputDescription, setInputDescription] = useState();
-  const [inputRoom, setInputRoom] = useState();
-  const [inputPhoto, setInputPhoto] = useState();
-  const [inputNumberOfPlace, setInputNumberOfPlace] = useState()
-  const [isOnlineWorkshop, setIsOnlineWorkshop] = useState(false)
-  const [inputPrice, setInputPrice] = useState()
+  const { handlePost, handlePostFile, handleFetch, handlePatch } = useFetch();
+
+  // États du formulaire
+  const [inputName, setInputName] = useState("");
+  const [inputDescription, setInputDescription] = useState("");
+  const [inputRoom, setInputRoom] = useState("");
+  const [inputNumberOfPlace, setInputNumberOfPlace] = useState(0);
+  const [inputPrice, setInputPrice] = useState(0);
   const [inputDateStart, setInputDateStart] = useState("");
   const [inputDateEnd, setInputDateEnd] = useState("");
   const [checkIsPublic, setCheckIsPublic] = useState(true);
-  const [inputOwnerId, setInputOwnerId] = useState();
-  const [showAllUsers, setShowAllUser] = useState([])
-
-
+  const [inputOwnerId, setInputOwnerId] = useState("");
+  const [files, setFiles] = useState([]);
+  const [filePreview, setFilePreview] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingButton, setIsLoadingButton] = useState(false);
 
-  const [filePreview, setFilePreview] = useState();
-  const [files, setFiles] = useState("");
-  const [dataForm, setDataForm] = useState();
+  const [pdfPreview, setPdfPreview] = useState("");
+  const [pdf, setPdf] = useState("");
 
+  const [showAllUsers, setShowAllUser] = useState([])
   const navigateToMyWorkshops = useNavigate()
-  
-  
-    
-  const handleSubmitFiles =(event)=>{
-    setFiles(event.target.files);
+
+  const nameRef = useRef();
+  const descriptionRef = useRef();
+  const salleRef = useRef();
+  const numberOfPlaceRef = useRef();
+  const priceRef = useRef();
+  const dateStartRef = useRef();
+  const dateEndRef = useRef();
+  const inputImageRef = useRef();
+  const submitButtonRef = useRef();
+
+  const startEventDate = new Date(event?.startDate)
+  const endEventDate = new Date(event?.endDate)
+
+  const handleSubmitFiles = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFiles([file]);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setFilePreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+
+  const handleSubmitPdf = (event) => {
+    setPdf(event.target.files);
     const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setFilePreview(e.target.result); // URL de l'image pour la prévisualisation
-    };
-    reader.readAsDataURL(file);
+    const url = URL.createObjectURL(file);
+
+    setPdfPreview(url)
   }
 
   dayjs.extend(customParseFormat);
-const disabledDate = (current) => {
-  return current && current < dayjs().endOf('day');
-};
-
-
-const showModal = () => {
-    setVisible(true);
+  const disabledDate = (current) => {
+    return current && current < dayjs().endOf('day');
   };
 
-  const handleCancel = () => {
-    setVisible(false);
-  };
-    
-    const [ErrorMessage, setErrorMessage] = useState()
-    const [visible, setVisible] = useState(false);
-    const [file, setFile] = useState();
+  const emptyFormCreateWorkshop = () => {
+    setFiles("")
+    setInputOwnerId("")
+    setPdf("")
+    setPdfPreview("")
+    setInputDescription("")
+    setInputDateStart("")
+    setInputDateEnd("")
+    setCheckIsPublic(false)
+    setInputName("")
+    setInputNumberOfPlace(0)
+    setInputPrice("")
+    setInputRoom("")
+  }
 
-    const nameRef = useRef()
-    const salleRef = useRef()
-    const dateStartRef = useRef()
-    const HourStartRef = useRef()
-    const HourEndRef = useRef()
-    const inputImageRef = useRef()
-    const descriptionRef = useRef()
-    const pricePremiumRef = useRef()
-    const priceVipRef = useRef()
-    const numberOfPlaceRef = useRef()
-    const submitedButtonRef = useRef()
-    const errorMessageRef = useRef()
-
-
-    const stylesImage = {
-        maxWidth: '50%',
-        maxHeight: '300px',
-      };
-
-    const handleChangeStatusOfEvent = (e) => {
-      setCheckIsPublic(e.target.value)
-    }
-
-    useEffect(()=>{
-      const handleShowAllUser = async () => {
-        const urlUsers = `${import.meta.env.VITE_EVENTS_API}/users`
-        try{
-          setIsLoading(true);
-          const response = await handleFetch(urlUsers)
-          if (response) {
-            const filteredUsers = response.map((user) => ({
-              id: user.id,
-              name: user.name
-            }));
-            // console.log("users",filteredUsers)
-            setShowAllUser(filteredUsers);
-                } 
-            } 
-            catch (error) {
-              console.error('Erreur lors de la récupération des utilisateurs :', error);
-               }
-               finally{
-                setIsLoading(false);
-               }
-        };
-        handleShowAllUser();
-    },[])
-
-
-    const handleFormCreateWorkshop = async (e) =>{
-      e.preventDefault()
-      const urlFile = `${import.meta.env.VITE_EVENTS_API}/files/upload`
-      let imageUrl;
+  useEffect(() => {
+    const handleShowAllUser = async () => {
+      const urlUsers = `${import.meta.env.VITE_EVENTS_API}/users`
       try {
-        setIsLoadingButton(true);
-        const res = await handlePostFile(urlFile, files[0]);
-        const err = res.error
-          if(!err){
-            imageUrl = res[0].url;
-            // console.log("Check",imageUrl)
-          }
-          else {
-            toast.error(err, { duration: 5000});
-            return;
-          }
+        setIsLoading(true);
+        const response = await handleFetch(urlUsers)
+        if (response.success) {
+          const filteredUsers = response.result.data.map((user) => ({
+            id: user.id,
+            name: user.name
+          }));
+          // console.log("users",filteredUsers)
+          setShowAllUser(filteredUsers);
+        }
       }
       catch (error) {
-        toast.error("Une erreur est survenue sur l'opload de l'image", { duration: 5000 });
+        console.error('Erreur lors de la récupération des utilisateurs :', error);
       }
-      finally{
-        setIsLoadingButton(false);
-        }
-
-
-      const data = { 
-        "eventId": id,
-        "name":inputName, 
-        "description":inputDescription,
-        "room":inputRoom,
-        "photo":imageUrl,
-        "numberOfPlaces":parseInt(inputNumberOfPlace),
-        "isOnlineWorkshop":isOnlineWorkshop,
-        "ownerId":inputOwnerId,
-        "price":parseInt(inputPrice),
-        "startDate":inputDateStart.split("-").reverse().join("-"),
-        "endDate":inputDateEnd.split("-").reverse().join("-"),
-        "isPublic":checkIsPublic === "true" ? true : false
+      finally {
+        setIsLoading(false);
       }
-      // console.log(data)
-      const url = `${import.meta.env.VITE_EVENTS_API}/workshops/create`
-      try {
-        setIsLoadingButton(true);
-            const response = await handlePost(url, data);
-            const err = response.error
-      
-            if (!err) {
-              setDataForm(response?.results)
-              navigateToMyWorkshops(`/events/${id}`)
-            } else {
-              toast.error(err, { duration: 5000});
-              return;
-            }
-          } catch (error) {
-            toast.error("Echec de création de l'atelier, veuillez réessayer",
-            {
-              duration: 2000}
-             );
-           }
-           finally{
-            setIsLoadingButton(false);
-           }
+    };
+    handleShowAllUser();
+  }, [])
+
+  const handleApproveWorkshop = async (id) => {
+    const url = `${import.meta.env.VITE_EVENTS_API}/workshops/approved/${id}`
+
+    setIsLoading(true)
+    try {
+      const response = await handlePatch(url)
+
+      if (response.success) {
+        toast.success("Atelier créé avec succès", { duration: 1000 });
+        setTimeout(() => {
+          onSuccess()
+          emptyFormCreateWorkshop()
+        }, 1000);
+      }
+    }
+    catch (error) {
+      console.error("Erreur lors de l'approbation de l'atélier:", error);
+    }
+    finally {
+      setIsLoading(false)
     }
 
+  }
+
+  const handleFormCreateWorkshop = async (e) => {
+    e.preventDefault();
+
+    const urlFile = `${import.meta.env.VITE_EVENTS_API}/files/upload`;
+    const workshopDataUrl = `${import.meta.env.VITE_EVENTS_API}/workshops/create`;
+
+    let imageUrl;
+    let pdfUrl
+
+    try {
+      setIsLoading(true);
+
+      // Upload de l'image
+      const imageRes = await handlePostFile(urlFile, files[0]);
+      if (imageRes.error) {
+        toast.error(imageRes.error, { duration: 5000 });
+        return;
+      }
+
+      imageUrl = imageRes.result[0].url;
+
+      if (pdf) {
+        try {
+          setIsLoading(true)
+          const res = await handlePostFile(urlFile, pdf[0]);
+          const err = res.error
+          if (res.success) {
+            pdfUrl = res.result[0].url;
+          }
+          else {
+            toast.error(err, { duration: 5000 });
+            return;
+          }
+        }
+        catch (error) {
+          toast.error("Une erreur est survenue lors de l'upload du pdf", { duration: 5000 });
+        }
+        finally {
+          setIsLoading(false)
+        }
+      }
+
+      if (!inputPrice) return toast.error("Veuillez entrer le prix de l'atelier", { duration: 3000 });
+
+      if (!inputDateStart) return toast.error("Veuillez selectionner la date et heure de début", { duration: 3000 });
+
+      if (!inputDateEnd) return toast.error("Veuillez selectionner la date heure de fin", { duration: 3000 });
+
+      // Création de l'atelier
+      const data = {
+        eventId: idEvent,
+        name: inputName,
+        description: inputDescription,
+        room: inputRoom,
+        photo: imageUrl,
+        numberOfPlaces: parseInt(inputNumberOfPlace),
+        isOnlineWorkshop: false,
+        ownerId: inputOwnerId,
+        price: parseInt(inputPrice),
+        startDate: dayjs(inputDateStart, "YYYY-MM-DD HH:mm:ss").toISOString(),
+        endDate: dayjs(inputDateEnd, "YYYY-MM-DD HH:mm:ss").toISOString(),
+        // isPublic: checkIsPublic === "true" ? true : false,
+        isPublic: true,
+      };
+
+      if (pdf) data.program = pdfUrl
+
+      const response = await handlePost(workshopDataUrl, data);
+
+      if (response?.success) {
+        handleApproveWorkshop(response.result.id)
+      } else {
+        toast.error(response.error || "Erreur lors de la création de l’atelier", { duration: 5000 });
+      }
+    } catch (error) {
+      toast.error("Une erreur est survenue", { duration: 5000 });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   //Options qui fourni les data à autoComplete Ant Design
-    const options = showAllUsers.map((user) => ({
-      id: user.id, // Valeur de l'option (ID de l'utilisateur)
-      value: user.name // Nom affiché dans la liste déroulante
-    }));
+  const options = showAllUsers.map((user) => ({
+    id: user.id, // Valeur de l'option (ID de l'utilisateur)
+    value: user.name // Nom affiché dans la liste déroulante
+  }));
+
+  console.log(inputDateStart, "inputDateStart");
+
+
   return (
-    <div className=" w-[380px] sm:w-[700px] md:w-[750px] lg:w-[800px]">
-       
-        <div className=''>
-            
-          <h3 className='text-lg sm:text-2xl font-extrabold'>Détails de l'atélier</h3>
+    <div className="">
+      {/* <h1 className="text-xl  text-gray-900 text-center mb-6">Créer un atelier</h1> */}
 
-          <div className='space-y-2 mt-2'>
+      <div className="w-full max-w-xl mx-auto p-4 bg-white">
+        <form onSubmit={handleFormCreateWorkshop} className="space-y-6">
 
-            <div className='flex flex-col space-x-2'>
-              <h3 className='w-2/5'>Titre de l'atélier :<sup className='text-red-400'>*</sup></h3>
-              <input type="text" value={inputName} onChange={(e) =>setInputName(e.target.value)} 
-              ref={nameRef} placeholder="Entrer le nom de l'atélier" 
-              className='border border-1 border-gray-10 text-gray-900 outline-0.1 text-sm rounded-md block w-4/5 sm:w-3/5 p-2.5 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400' 
-              required/>
+          {/* Nom */}
+          <div className="flex flex-col space-y-2">
+            <label className="font-medium text-gray-700">
+              Titre de l’atelier <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              placeholder="Entrer le nom de l'atelier"
+              value={inputName}
+              onChange={(e) => setInputName(e.target.value)}
+              ref={nameRef}
+              className="border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none font-sans"
+              required
+            />
+          </div>
+
+          {/* Salle */}
+          <div className="flex flex-col space-y-2">
+            <label className="font-medium text-gray-700">
+              Indiquer la salle <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              placeholder="Entrer le lieu de l'atelier"
+              value={inputRoom}
+              onChange={(e) => setInputRoom(e.target.value)}
+              ref={salleRef}
+              className="border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none font-sans"
+              required
+            />
+          </div>
+          <div>
+            <div className='flex'>
+              <div className=''>
+                <label className=''>Date de début :<sup className='text-red-400'>*</sup></label>
+                <DatePicker
+                  showTime
+                  format="YYYY-MM-DD HH:mm:ss"
+                  valueFormat="YYYY-MM-DDTHH:mm:ss.SSSZ"
+                  disabledDate={disabledDate}
+                  onChange={(_, dateStr) => setInputDateStart(dateStr)}
+                  className='border border-5 rounded-md flex py-2 my-2'
+                />
+              </div>
+              <div className='space-x-3'>
+                <label className='font-medium'>Date de fin :<sup className='text-red-400'>*</sup></label>
+                <DatePicker
+                  showTime
+                  format="YYYY-MM-DD HH:mm:ss"
+                  valueFormat="YYYY-MM-DDTHH:mm:ss.SSSZ"
+                  disabledDate={disabledDate}
+                  onChange={(_, date) => setInputDateEnd(date)}
+                  className='border border-5 rounded-md flex py-2 my-2'
+                />
+              </div>
             </div>
-
-            <div className='flex flex-col space-x-2'>
-              <h3 className='w-2/5'>Indiquer la salle :<sup className='text-red-400'>*</sup></h3>
-              <input type="text" value={inputRoom} onChange={(e)=>setInputRoom(e.target.value)} 
-              ref={salleRef} placeholder="Entrer le lieu de l'atélier" 
-              className='border border-1 border-gray-10 text-gray-900  outline-0.1 text-sm rounded-md block w-4/5 sm:w-3/5 p-2.5 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400' 
-              required/>
+            <div className="flex items-center space-x-1 text-orange-500">
+              <div className="text-xs font-bold border-l-2 border-l-orange-500">
+                NB
+              </div>
+              <div className="text-xs">L'évènement commence du {event?.startDate && startEventDate.toLocaleString("fr-FR", {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+                <span> au </span>
+                {event?.startDate && endEventDate.toLocaleString("fr-FR", {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </div>
             </div>
-            
           </div>
-        </div>
 
-        <div className='my-6'>
-
-          <h3 className='text-lg sm:text-2xl font-extrabold'>Date et l'heure</h3>
-
-          <div className='flex flex-col space-x-3 my-2'>
-                <div className='w-2/5'>Session</div>
-                <div className='flex flex-row space-x-4'>
-
-                    <div className='space-x-3'>
-                        <label className='font-semibold'>Date de début :<sup className='text-red-400'>*</sup></label>
-                        <DatePicker 
-                                      format="DD-MM-YYYY"
-                                      disabledDate={disabledDate}
-                                      onChange={(_, dateStart)=>{
-                                        setInputDateStart(dateStart)
-                                      }}
-                                      className='border border-5 rounded-md'
-                                    />
-                    </div>
-                    <div className='space-x-3'>
-                        <label className='font-semibold'>Date de fin :<sup className='text-red-400'>*</sup></label>
-                        <DatePicker 
-                                      format="DD-MM-YYYY"
-                                      disabledDate={disabledDate}
-                                      onChange={(_, dateEnd)=>{
-                                        setInputDateEnd(dateEnd)
-                                      }}
-                                      className='border border-5 rounded-md'
-                                    />
-                    </div>
-                </div>
+          {/* Photo */}
+          <div className="flex flex-col space-y-2">
+            <label className="text-gray-700">
+              Importer la bannière de votre atelier <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleSubmitFiles}
+              ref={inputImageRef}
+              className="border font-sans border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
+              required
+            />
+            {filePreview && (
+              <img src={filePreview} alt="Aperçu" className="mt-2 h-32 object-cover rounded" />
+            )}
           </div>
-        </div>
 
-
-        <div className='my-6'>
-          <div className='flex flex-col space-x-2'>
-            <h3 className=' w-4/5 sm:w-3/5'>Importer la Bannière de votre atélier :<sup className='text-red-400'>*</sup></h3>
-                  <input type="file" id='file'
-                  ref={inputImageRef} accept="image/png, image/jpeg, image/jpg" 
-                        onChange={handleSubmitFiles} 
-                  className='bg-gray-200 border-gray-10 
-                  text-gray-900 outline-0.1 text-sm rounded-md block w-5/6 sm:w-3/5 p-2.5 sm:p-3 
-                  light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400' 
-                  required/>
-                  <img src={filePreview} alt='' style={stylesImage}/>
+          {/* pdf upload */}
+          <div className="flex flex-col space-y-2">
+            <label className="font-medium text-gray-700">Importer le programme de l'atelier</label>
+            <input
+              type="file"
+              accept=".pdf"
+              onChange={handleSubmitPdf}
+              className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4
+                        file:rounded file:border-0
+                        file:text-sm file:font-semibold
+                        file:bg-green-100 file:text-green-700
+                        hover:file:bg-green-200"
+            // required
+            />
+            {pdfPreview && (
+              <a href={pdfPreview} target="_" className="p-2 text-green-700 hover:text-green-500">Visualiser le programme importé</a>
+            )}
           </div>
-          <div className='flex flex-col space-x-2 my-2'>
-            <h3 className=' w-3/5'>Décrivez votre atélier :<sup className='text-red-400'>*</sup></h3>
-                  <textarea type="text" ref={descriptionRef} value={inputDescription}
-                    onChange={(e)=>setInputDescription(e.target.value)} 
-                    placeholder="Décrivez les particularités de votre atélier et les autres détails importants." 
-                  className='border border-1 border-gray-10 
-                  text-gray-900  outline-0.1 text-xs rounded-md block w-5/6 sm:w-3/5 p-2.5 
-                  light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400' 
-                  required/>
+
+          {/* Description */}
+          <div className="flex flex-col space-y-2">
+            <label className="font-medium text-gray-700">
+              Décrivez votre atelier <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              value={inputDescription}
+              onChange={(e) => setInputDescription(e.target.value)}
+              ref={descriptionRef}
+              placeholder="Décrivez les particularités de votre atelier..."
+              className="font-sans border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none resize-none"
+              rows="3"
+              required
+            />
           </div>
-        </div>
 
-        <div className='my-2'>
-
-            <h3 className='text-lg sm:text-2xl font-extrabold'>Informations additionnelles</h3>
-
-            <div className='flex flex-col space-x-2 pt-2'>
-              <h3 className=' w-4/5'>Indiquer le prix de votre atélie :<sup className='text-red-400'>*</sup></h3>
-              <input type='number' value={inputPrice}
-              onChange={(e)=>setInputPrice(e.target.value)}
-              ref={pricePremiumRef}
-              className="text-sm px-1 border border-1 resize rounded-md h-10 w-5/6 sm:w-3/5"/>
-            </div>
-
-            <div className='flex flex-col space-x-2  pt-2'>
-              <h3 className='w-2/5'>Nombre de places :<sup className='text-red-400'>*</sup></h3>
-              <input type='number' value={inputNumberOfPlace}
-              onChange={(e)=>setInputNumberOfPlace(e.target.value)}
+          {/* Nombre de places */}
+          <div className="flex flex-col space-y-2">
+            <label className="font-medium text-gray-700">
+              Nombre de places <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              value={inputNumberOfPlace}
+              onChange={(e) => setInputNumberOfPlace(e.target.value)}
               ref={numberOfPlaceRef}
-              className="text-sm px-1 border border-1 resize rounded-md h-10 w-5/6 sm:w-3/5"/>
+              className=" font-sans border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
+              required
+              min={0}
+            />
+          </div>
+
+          {/* Prix */}
+          <div className="flex flex-col space-y-2">
+            <label className="font-medium text-gray-700">
+              Indiquez le prix de l’atelier <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              value={inputPrice}
+              onChange={(e) => setInputPrice(e.target.value)}
+              ref={priceRef}
+              placeholder="Prix en FCFA"
+              className="border font-sans border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
+              required
+              min={0}
+            />
+          </div>
+          <div className="flex flex-col pt-2">
+            <label htmlFor="ownerSelect" className="font-medium text-gray-700 mb-1">
+              Définir un propriétaire <sup className="text-red-500">*</sup>
+            </label>
+
+            <div className="relative">
+              <select
+                id="ownerSelect"
+                className={`w-full font-sans border border-gray-300 rounded-md px-4 py-2 bg-white focus:ring-2 focus:ring-green-400  focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed transition duration-200`}
+                disabled={isLoading}
+                value={inputOwnerId}
+                onChange={(e) => setInputOwnerId(e.target.value)}
+              >
+                <option value="" disabled hidden>
+                  Sélectionnez un propriétaire
+                </option>
+                {options.map((user) => (
+                  <option key={user.id} value={user.id} className="capitalize">
+                    {user.value}
+                  </option>
+                ))}
+              </select>
             </div>
+          </div>
 
-            <div className='flex flex-col space-x-2 pt-2'>
-              <h3 className='w-3/5'>Définir un propriétaire :<sup className='text-red-400'>*</sup></h3>
-              <AutoComplete
-                    className="w-5/6 sm:w-3/5"
-                    options={options}
-                    placeholder="Commencez à écrire…"
-                    filterOption={(inputValue, option) =>
-                      option.value.toUpperCase().includes(inputValue.toUpperCase())
-                    }
-
-                    onChange={(value) => {
-                      // Trouver l'option correspondante à la valeur sélectionnée
-                      const selectedOption = options.find(option => option.value === value);
-                  
-                      // Si une option est trouvée, récupérer son ID et le stocker dans inputOwnerId
-                      if (selectedOption) {
-                        setInputOwnerId(selectedOption.id);
-                      }
-                    }}
-                    
-                  />
-              
+          {/* Statut public/privé */}
+          {/* <div className="flex flex-col space-y-2">
+            <label className="font-medium text-gray-700">
+              Statut de l’atelier <span className="text-red-500">*</span>
+            </label>
+            <div className="flex items-center gap-6 font-sans">
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  name="status"
+                  value={true}
+                  checked={checkIsPublic === "true" || checkIsPublic === true}
+                  onChange={(e) => setCheckIsPublic(e.target.value)}
+                  className="mr-2"
+                />
+                Public
+              </label>
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  name="status"
+                  value={false}
+                  checked={checkIsPublic === "false" || checkIsPublic === false}
+                  onChange={(e) => setCheckIsPublic(e.target.value)}
+                  className="mr-2"
+                />
+                Privé
+              </label>
             </div>
-        </div>
+          </div> */}
 
-        <div className="my-2">
-                                <div className='flex flex-col sm:flex-row'>
-                                          <div>
-                                                Quel est le statut de votre atélier :<sup className='text-red-400'>*</sup>
-                                          </div>
-                                            <div className=' mx-2 space-x-2 flex flex-row'>
-                                                <div className='space-x-1 flex flex-row'>
-                                                    <label htmlFor="public"> Public </label>
-                                                    <input 
-                                                    type="radio" 
-                                                    id="public" 
-                                                    name='status'
-                                                    className='ml-1 focus:outline-green-500 focus:ring-1 focus:ring-green-300 border border-gray-300 rounded px-10 py-2'
-                                                    value={true}
-                                                    onChange={(e)=>handleChangeStatusOfEvent(e)}/>
+          {/* Bouton soumission */}
+          <div className="flex justify-end mt-6">
+            <button
+              type="submit"
+              disabled={isLoading}
+              ref={submitButtonRef}
+              className={`px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md transition duration-200 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
+            >
+              {isLoading ? 'Création en cours...' : 'Créer'}
+            </button>
+          </div>
+        </form>
+      </div>
 
-                                                </div>
-                                                <div className='space-x-1'>
-                                                  <label htmlFor="private"> Privé </label>
-                                                    <input 
-                                                    type="radio" 
-                                                    id="private" 
-                                                    name='status'
-                                                    className=' ml-1 focus:outline-green-500 focus:ring-1 focus:ring-green-300 border border-gray-300 rounded px-10 py-2'
-                                                    value={false}
-                                                    onChange={(e)=>handleChangeStatusOfEvent(e)}/>
+      <Toaster />
+    </div>
+  );
+};
 
-                                                </div>
-                                            </div>
-
-                                </div>
-        </div>
-
-        <div className='flex justify-end'>
-              <button 
-                className={`${isLoadingButton ? "bg-primary cursor-not-allowed":" hover:bg-green-700"} bg-primary text-white px-4 py-3 mt-5 rounded shadow-sm text-xs`} 
-                disabled={isLoadingButton}
-                onClick={(e)=>handleFormCreateWorkshop(e)} ref={submitedButtonRef}
-                >
-                  {isLoadingButton ? "Création en cours...":"Créer un atélier"}
-                </button>
-                <p ref={errorMessageRef} className='text-red-400'>{ErrorMessage}</p>
-        </div>
-      <Toaster/>
-</div>
-  )
-}
-
-export default CreateWorkshop
+export default CreateWorkshop;

@@ -5,11 +5,10 @@ const VideoWrapper = ({ children, id }) => {
     <div className="w-full h-full p-4 flex flex-wrap overflow-auto" id={id}>
       {React.Children.map(children, (child, index) => (
         <div
-          className={`${
-            children.length === 1
-              ? 'w-full h-full'
-              : 'max-w-[400px] w-full aspect-square'
-          } flex-grow`}
+          className={`${children.length === 1
+            ? 'w-full h-full'
+            : 'max-w-[400px] w-full aspect-square'
+            } flex-grow`}
           key={index}
         >
           {child}

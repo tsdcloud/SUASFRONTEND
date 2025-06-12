@@ -3,50 +3,66 @@ import webinar from "../assets/webinar.jpg"
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 
+import { useTranslation } from "react-i18next";
+
 function AboutUs() {
-    document.title = "A propos de nous"
-    useEffect(() => {
-        return () => {
-          window.scrollTo({ top: 0, behavior: 'smooth' })
-        }
-      }, []);
-    return (
-      <>
-        <Header/>
-            <div className=' sm:mb-6 sm:p-0 sm:pt-0 p-5 pt-1 mb-20 sm:justify-center min-h-screen'>
-                <span className="sm:mt-6 sm:ml-6 justify-center self-start px-2 py-1 mt-20 ml-10 text-center text-black whitespace-nowrap 
-                    rounded-md  inline-flex items-center bg-green-200  text-xs font-medium
-                    ring-1 ring-inset ring-gray-500/10 ">
-                    Qu'est ce que c'est ?
-                </span>
+  document.title = "A propos de nous"
 
-                <div className="flex flex-col-reverse my-2 sm:flex-col lg:flex-row justify-between sm:justify-between sm:items-center sm:m-0 md:flex-col md:w-full">
+  const { t } = useTranslation();
 
-                    <div className=" sm:flex-col w-full md:w-full sm:w-full px-1 py-3 flex-col md:text-sm md:px-9">
+  
+  useEffect(() => {
+    return () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, []);
+  
+  return (
+    <>
+      {/* <Header /> */}
+      <div className="my-4 px-4 mx-4 mb-20 flex flex-col justify-center animate-fade-in">
+        {/* Badge */}
+        <span className="self-start sm:ml-6 sm:mt-6 mt-6 text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-800 ring-1 ring-green-300">
+          Qu'est-ce que c'est ?
+        </span>
 
-                        <h1 className="text-2xl sm:text-3xl font-extrabold text-neutral-900 md:text-3xl">
-                           SUAS est l'application idéale pour les professionnels de l'événementiel.
-                        </h1>
-                        <p className="mt-5 text-sm">
-                          SUAS est une solution complète et évolutive pour la gestion d'événements professionnels.
-                          Que vous soyez un organisateur d'événements expérimenté ou un débutant,
-                          SUAS peut vous aider à organiser des événements réussis et mémorables
-                          qui dépassent les attentes.
-                        </p>
-                        <p className="sm:text-sm mt-5 text-sm">
-                        une application web conçue pour simplifier et rationaliser la gestion d'événements professionnels.
-                        Elle offre aux organisateurs d'événements une solution complète pour gérer
-                        tous les aspects de leurs événements, de la planification initiale
-                        à l'exécution et au suivi post-événement.
-                        </p>
-                    </div>
+        {/* Contenu principal */}
+        <div className="flex flex-col-reverse lg:flex-row items-center justify-between w-full gap-6 mt-8 ">
 
-                    <img src={webinar} alt="webinar" className="sm:my-5 w-full float-end md:my-5 md:w-full h-[350px] md:px-7 object-cover rounded-md md:rounded-lg lg:rounded-xl sm:w-full sm:px-0 sm:h-[300px]" />
-                </div>
+          {/* Texte */}
+          <div className="w-full px-2 md:px-5">
+            <h1 className="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight tracking-tight">
+              SUAS est l'application idéale pour les professionnels de l'événementiel.
+            </h1>
+            <p className="mt-5 text-gray-700 text-base leading-relaxed">
+              SUAS est une solution complète et évolutive pour la gestion d'événements professionnels.
+              Que vous soyez un organisateur d'événements expérimenté ou un débutant,
+              SUAS peut vous aider à organiser des événements réussis et mémorables
+              qui dépassent les attentes.
+            </p>
+            <p className="mt-5 text-gray-700 text-base leading-relaxed">
+              Une application web conçue pour simplifier et rationaliser la gestion d'événements professionnels.
+              Elle offre aux organisateurs une solution tout-en-un pour gérer chaque étape de leurs événements :
+              de la planification initiale à l'exécution et au suivi post-événement.
+            </p>
+          </div>
+
+          {/* Image avec vignettage */}
+          <div className="relative w-full md:px-1">
+            <img
+              src={webinar}
+              alt="webinar"
+              className="w-full h-[300px] md:h-[350px] object-cover rounded-xl shadow-md"
+            />
+            <div className="absolute inset-0 rounded-xl pointer-events-none "
+              style={{ background: "radial-gradient(circle, transparent 60%, rgba(0,0,0,0.3) 80%)" }}>
             </div>
-        <Footer/>
-      </>
-    )
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </>
+  )
 }
 
 export default AboutUs

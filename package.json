@@ -4,10 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 192.168.1.125",
+    "dev": "vite --host 172.19.120.186",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite"
   },
   "dependencies": {
     "@ant-design/icons": "^5.4.0",
@@ -23,14 +24,19 @@
     "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "framer-motion": "^11.2.12",
+    "i18next": "^25.2.1",
+    "keen-slider": "^6.8.6",
     "lottie-react": "^2.4.0",
     "mediasoup-client": "^3.7.16",
     "mkcert": "^3.2.0",
     "moment": "^2.30.1",
+    "qrcode.react": "^4.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.6",
     "react-hot-toast": "^2.4.1",
+    "react-i18next": "^15.5.2",
+    "react-qr-reader": "^3.0.0-beta-1",
     "react-router-dom": "^6.23.1",
     "react-scripts": "^5.0.1",
     "socket.io-client": "^4.7.5",

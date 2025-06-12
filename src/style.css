@@ -1,0 +1,50 @@
+/* Cacher la scrollbar pour Chrome, Edge et Safari */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Cacher la scrollbar pour Firefox */
+.scrollbar-hide {
+  scrollbar-width: none; /* "auto" | "thin" | "none" + couleur facultative */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+
+/* Styles pour les onglets actifs */
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #1b783d !important;
+}
+
+.ant-tabs-ink-bar {
+  background: #1b783d !important;
+}
+
+/* Texte de l'onglet au survol */
+.ant-tabs-tab:hover .ant-tabs-tab-btn {
+  color: green !important;
+}
+
+.ant-picker-focused {
+  border-color: #22c55e !important;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3) !important;
+}
+
+/* Hover (quand la souris passe au-dessus) */
+.ant-picker:hover {
+  border-color: #22c55e !important;
+}
+
+@keyframes scan {
+  0% {
+    top: 0%;
+  }
+  50% {
+    top: 95%;
+  }
+  100% {
+    top: 0%;
+  }
+}
+
+.animate-scan {
+  animation: scan 2.5s infinite ease-in-out;
+}

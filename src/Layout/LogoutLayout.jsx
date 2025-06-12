@@ -1,44 +1,53 @@
-import React, {useState, useContext, useEffect, useRef} from 'react'
+import React, { useState, useContext, useEffect, useRef } from 'react'
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/outline";
-import {Link, useNavigate} from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useFetch } from '../hooks/useFetch';
 import toast, { Toaster } from 'react-hot-toast';
 import MapSuas from "../assets/Map suas.png"
-import whiteLogo from "../assets/suas_logo.png"
+import whiteLogo from "../assets/Logo Suas 1.png"
+import { useTranslation } from "react-i18next";
 
+export default function LogoutLayout({ children }) {
 
-import Preloader from '../Components/Preloader'
-export default function LogoutLayout({children}) {
+  const { t } = useTranslation();
+
   return (
-   <div className='h-screen w-screen relative overflow-hidden flex flex-col items-center'>
-      <div className="absolute bg-gradient-to-t from-[#104e45] to-[#306b6c] h-full w-full flex justify-center items-center -z-[2]"/>
+    <div className="min-h-screen relative flex flex-col items-center bg-gradient-to-t from-[#104e45] to-[#306b6c] animate-fade-in">
+
       {/* Header */}
-      <div className='px-[20px] py-[20px] w-full flex justify-start sm:justify-start sm:px-6 lg:px-10 '>
-        <Link to='/'>
-          <img src={whiteLogo} className='w-[150px] sm:ml-0' alt='' />
+      <div className="w-full px-4 sm:px-6 lg:px-10 py-6 flex justify-start z-10">
+        <Link to="/">
+          <img src={whiteLogo} className="w-[150px] brightness-125" alt="Logo SUAS" />
         </Link>
       </div>
-      <img
-        className="fixed bg-cover bg-center w-[600px] h-auto bottom-0 left-[100px] -z-0 "
-        src={MapSuas}
-        alt=''
-        // style={{ 
-        //   background: "url('/assets/Map suas.png')", 
-        //   backgroundSize:'cover',
-        //   backgroundPosition:'top center'
-        // }}
-      />
-      <div className='p-2 sm:p-7 flex lg:justify-around sm:flex-grow flex-col sm:flex-row md:flex-row mt-14 sm:w-full sm:justify-evenly space-x-1 sm:space-x-6 z-[3]'>
-            <div className='flex flex-col text-white items-start h-full'>
-              {/* <img src={whiteLogo} alt="" className='h-[100px] aspect-auto' /> */}
-              <h2 className='px-3 sm:px-0 text-3xl lg:text-[45px] font-bold'>Bienvenue sur SUAS</h2>
-              <p className='px-3 sm:px-0 text-xs sm:text-sm font-light'>L'application de gestion d'évènement par excellence.</p>
-            </div>
 
+      {/* Image décorative */}
+      <img
+        className="fixed bg-cover bg-center w-[600px] h-auto sm:bottom-0 left-[100px] -z-0"
+        src={MapSuas}
+        alt="Carte SUAS"
+      />
+
+      {/* Contenu principal scrollable si besoin */}
+      <div className="flex-1 w-full overflow-y-auto px-4 sm:px-6 z-10">
+        <div className="max-w-screen-xl mx-auto flex flex-col lg:flex-row items-start justify-between gap-8 mt-6 pb-10">
+          {/* Texte d’introduction */}
+          <div className="text-white flex-1">
+            <h2 className="text-3xl lg:text-5xl font-bold">{t("greeting_log_layout_text")}</h2>
+            <p className="mt-2 text-sm sm:text-base font-light">
+              {t("greeting_log_layout_text_description")}
+            </p>
+          </div>
+
+          {/* Formulaire ou autre contenu */}
+          <div className="w-full max-w-md">
             {children}
-            {/* <div className='text-xs mt-2'> &copy; 2024 SUAS. Tous les droits sont réservés.</div> */}
-            <Toaster />
+          </div>
+        </div>
       </div>
-   </div>
-  )
+
+      <Toaster />
+    </div>
+
+  );
 }

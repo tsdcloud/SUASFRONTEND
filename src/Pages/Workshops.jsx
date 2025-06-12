@@ -6,7 +6,7 @@ function Workshops() {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }, []);
-  
+
   return (
     <div>Workshops</div>
   )
