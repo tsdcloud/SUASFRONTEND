@@ -139,7 +139,7 @@ function SignUp() {
           toast.error(res.message || "Erreur lors de l'upload de l'image", { duration: 5000 });
           return;
         }
-        imageUrl = res[0]?.url;
+        imageUrl = res.result[0]?.url;
       }
 
       const data = {
