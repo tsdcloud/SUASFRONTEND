@@ -288,14 +288,14 @@ function Profile() {
             )}
 
             {/* Bouton Modifier */}
-            <div className='flex justify-center w-full'>
+            {/* <div className='flex justify-center w-full'>
               <button
                 onClick={showModal}
                 className="mt-6 py-2 px-2 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm rounded-lg shadow-sm transition-colors focus:outline-none"
               >
                 Modifier
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
