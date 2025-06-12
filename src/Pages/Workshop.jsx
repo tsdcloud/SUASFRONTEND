@@ -758,11 +758,13 @@ function Workshop() {
                                   <VerifyPermission
                                     expected={[Roles.SUPPORT, Roles.MODERATOR]}
                                     received={
-                                      userData?.userRole?.name === (Roles.SUPPORT && showWorkshop
-                                        ?.participants?.some(participant => participant?.ownerId === userData?.id)) ? Roles.SUPPORT :
-                                        showWorkshop
-                                          ?.participants?.find(participant => participant?.ownerId === userData?.id)
-                                          ?.participantRole?.name === Roles.MODERATOR ? Roles.MODERATOR : "failed"
+                                      (userData?.userRole?.name === Roles.SUPPORT && showWorkshop
+                                        ?.participants?.some(participant => participant?.ownerId === userData?.id)) && Roles.SUPPORT
+                                      // userData?.userRole?.name === (Roles.SUPPORT && showWorkshop
+                                      //   ?.participants?.some(participant => participant?.ownerId === userData?.id)) ? Roles.SUPPORT :
+                                      //   showWorkshop
+                                      //     ?.participants?.find(participant => participant?.ownerId === userData?.id)
+                                      //     ?.participantRole?.name === Roles.MODERATOR ? Roles.MODERATOR : "failed"
                                       // (
                                       //   userData?.userRole?.name === Roles.SUPPORT || 
                                       //   showWorkshop

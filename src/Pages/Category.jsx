@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 
 import catImg from '../assets/category.jpg'
 import CreateCategory from './CreateCategory';
+import VerifyPermission from '../Utils/VerifyPermission';
 
 
 
@@ -111,23 +112,26 @@ const Category = (props) => {
                 <div className='flex justify-between items-center'>
                     <h1 className="text-xl font-semibold text-gray-900">Les Catégories</h1>
 
-                    {!create ?
-                        <button className="flex py-2 px-2  bg-orange-400 text-white 
-                        rounded-md shadow-md hover:bg-orange-300 
-                        self-end text-sm text-center"
-                        >
-                            {/* <Link to="/users/create">Créer</Link> */}
-                            <span onClick={() => setCreate(true)}>Créer</span>
-                        </button>
-                        :
-                        <button className="flex py-2 px-2  bg-red-400 text-white 
-                        rounded-md shadow-md hover:bg-red-500 
-                        self-end text-sm text-center"
-                        >
-                            {/* <Link to="/users/create">Créer</Link> */}
-                            <span onClick={() => setCreate(false)}>Annuler</span>
-                        </button>
-                    }
+                    <VerifyPermission expected={[Roles.SUPPORT]} received={userData?.userRole?.name}>
+                        {!create ?
+                            <button className="flex py-2 px-2  bg-orange-400 text-white 
+                            rounded-md shadow-md hover:bg-orange-300 
+                            self-end text-sm text-center"
+                            >
+                                {/* <Link to="/users/create">Créer</Link> */}
+                                <span onClick={() => setCreate(true)}>Créer</span>
+                            </button>
+                            :
+                            <button className="flex py-2 px-2  bg-red-400 text-white 
+                            rounded-md shadow-md hover:bg-red-500 
+                            self-end text-sm text-center"
+                            >
+                                {/* <Link to="/users/create">Créer</Link> */}
+                                <span onClick={() => setCreate(false)}>Annuler</span>
+                            </button>
+                        }
+                    </VerifyPermission>
+
                 </div>
 
                 <Tabs
