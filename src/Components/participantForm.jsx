@@ -137,7 +137,7 @@ export default function ParticipantForm({ onSubmit, workshopData }) {
       const response = await handleFetch(urlUsers);
 
       if (response.success) {
-        let userRole = userData?.role?.name;
+        let userRole = userData?.userRole?.name;
 
         // if (userRole?.toLowerCase() !== Roles.SUPPORT.toLowerCase()) {
         //   setUser(userData?.id);

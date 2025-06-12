@@ -78,6 +78,10 @@ function SignUp() {
       isValid = false;
     }
 
+    if (!/^\d{7,}$/.test(phoneNumber)) {
+      toast.success("Le téléphone doit contenir au moins 7 chiffres.", { duration: 5000 });
+    }
+
     // if (!gender) {
     //   newErrors.gender = t("create_account_gender_required");
     //   isValid = false;
@@ -89,14 +93,26 @@ function SignUp() {
       //   isValid = false;
       // }
 
-      const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+      // const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+      // if (!password.trim()) {
+      //   newErrors.password = t("create_account_password_required");
+      //   isValid = false;
+      // } else if (!passwordRegex.test(password)) {
+      //   newErrors.password = t("create_account_password_invalid");
+      //   isValid = false;
+      // }
+
       if (!password.trim()) {
         newErrors.password = t("create_account_password_required");
         isValid = false;
-      } else if (!passwordRegex.test(password)) {
-        newErrors.password = t("create_account_password_invalid");
-        isValid = false;
+      } else if (password.length < 4) {
+        toast.success("Le mot de passe doit contenir au moins 4 caractères.", { duration: 5000 });
       }
+
+      // Validation du mot de passe
+      // if (password.length < 4) {
+      //   toast.success("Le mot de passe doit contenir au moins 4 caractères.", { duration: 5000 });
+      // }
 
       if (!confirmPassword.trim()) {
         newErrors.confirmPassword = t("create_account_confirm_password_required");
@@ -136,7 +152,7 @@ function SignUp() {
       if (files.length > 0) {
         const res = await handlePostFile(urlFile, files[0]);
         if (res?.error) {
-          toast.error(res.message || "Erreur lors de l'upload de l'image", { duration: 5000 });
+          toast.error(res?.message || "Erreur lors de l'upload de l'image", { duration: 5000 });
           return;
         }
         imageUrl = res.result[0]?.url;
@@ -148,11 +164,11 @@ function SignUp() {
         password,
       };
 
-      if(surname) data.surname = surname
-      if(email) data.email = email
-      if(gender) data.gender = gender
-      if(username) data.username = username
-      if(imageUrl) data.photo = imageUrl
+      if (surname) data.surname = surname
+      if (email) data.email = email
+      if (gender) data.gender = gender
+      if (username) data.username = username
+      if (imageUrl) data.photo = imageUrl
 
       const url = `${import.meta.env.VITE_EVENTS_API}/users/register`;
       const response = await handlePost(url, data, false);
@@ -162,6 +178,8 @@ function SignUp() {
         setTimeout(() => {
           navigateToSignIn('/signin');
         }, 1500);
+      } else {
+        toast.success(response.message, { duration: 5000 });
       }
 
     } catch (error) {
