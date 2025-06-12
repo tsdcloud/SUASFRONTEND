@@ -759,7 +759,7 @@ function Workshop() {
                                     expected={[Roles.SUPPORT, Roles.MODERATOR]}
                                     received={
                                       (userData?.userRole?.name === Roles.SUPPORT && showWorkshop
-                                        ?.participants?.some(participant => participant?.ownerId === userData?.id)) && Roles.SUPPORT
+                                        ?.participants?.some(participant => participant?.ownerId === userData?.id)) ? Roles.SUPPORT : null
                                       // userData?.userRole?.name === (Roles.SUPPORT && showWorkshop
                                       //   ?.participants?.some(participant => participant?.ownerId === userData?.id)) ? Roles.SUPPORT :
                                       //   showWorkshop
