@@ -150,8 +150,8 @@ const CreateWorkshop = ({ onSuccess, idEvent, event }) => {
 
       // Upload de l'image
       const imageRes = await handlePostFile(urlFile, files[0]);
-      if (imageRes.error) {
-        toast.error(imageRes.error, { duration: 5000 });
+      if (!imageRes.success) {
+        toast.error(imageRes.message, { duration: 5000 });
         return;
       }
 
@@ -166,7 +166,7 @@ const CreateWorkshop = ({ onSuccess, idEvent, event }) => {
             pdfUrl = res.result[0].url;
           }
           else {
-            toast.error(err, { duration: 5000 });
+            toast.error(res.message, { duration: 5000 });
             return;
           }
         }

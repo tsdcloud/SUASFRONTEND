@@ -721,7 +721,7 @@ function Workshop() {
                           {showWorkshop?.participants.length !== 0 ?
                             <div className='space-y-2'>
                               <hr />
-                              <p className='text-xs'> Participants validé(s) : <span className='font-sans'>{showParticipant?.length}/{showWorkshop?.numberOfPlaces}</span></p>
+                              <p className='text-xs'> Participants validé(s) : <span className='font-sans'>{(showParticipant?.length + participantModerator.length)}/{showWorkshop?.numberOfPlaces}</span></p>
                             </div>
                             :
                             ""

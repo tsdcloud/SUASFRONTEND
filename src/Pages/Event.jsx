@@ -17,6 +17,7 @@ import atelierEv from '../assets/Atelier.webp'
 import evImg from '../assets/Eventsdefault2.jpg'
 import CreateWorkshop from './CreateWorkshop.jsx';
 import QRCodeGenerator from '../Components/QRCode/QRCodeGenerator.jsx';
+import ParticipantBadge from '../Components/ParticipantBadge.jsx';
 
 
 function Event() {
@@ -401,7 +402,26 @@ function Event() {
               signedIn &&
               <div>
                 <hr />
-                <QRCodeGenerator userData={userData?.id} />
+                <h2 className='my-2 text-center'>
+                  Badge de participation
+                </h2>
+                <div className='my-4 flex items-center justify-center'>
+                  {/* <QRCodeGenerator userData={userData?.id} />
+
+                  <ParticipantBadge
+                    backgroundImage={evImg}
+                    logoImage={evImg}
+                    participantName="Jean DUPONT"
+                  /> */}
+
+                  <ParticipantBadge
+                    backgroundImage={evImg}
+                    logoImage={evImg}
+                    participantName="Jean DUPONT"
+                    qrcode={<QRCodeGenerator userData={userData?.id} />}
+                  />
+                </div>
+
               </div>
             }
 
@@ -577,7 +597,7 @@ function Event() {
                   ) : (
                     <div className='sm:ml-10 flex flex-col items-center justify-center'>
                       <ExclamationTriangleIcon className="h-12 w-12 text-gray-500" />
-                      <span className='text-center text-xs'>Eévènement pas encore approuver.</span>
+                      <span className='text-center text-xs'>Evènement pas encore approuver.</span>
                     </div>
                   )
                 }
@@ -597,7 +617,7 @@ function Event() {
           onSuccess={() => {
             setModalCreateCaState(false);
             showEventById();
-            toast.success("Atelier créé avec succès", { duration: 3000 });
+            // toast.success("Atelier créé avec succès", { duration: 3000 });
           }}
           idEvent={idEvent}
           event={event}

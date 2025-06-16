@@ -190,7 +190,7 @@ function Events() {
                         {<CreateEvent setOpen={setCreate} fetchData={showAllEventOfCreator} />}
                     </div>
                     : isApprovedEvent.length > 0 ? (
-                        <div className='flex overflow-x-auto sm:overflow-none sm:flex-row sm:flex-wrap sm:space-x-2 sm:gap-2 space-x-4 p-2 animate-fade-in'>
+                        <div className='overflow-x-auto flex sm:flex-wrap sm:space-x-0 sm:gap-2 space-x-4 animate-fade-in'>
                             {isApprovedEvent.map(item => (
                                 <div key={item.id} onClick={(e) => handleClickToEvent(e, item.id)}
                                     className='max-h-[360px] h-[360px]  min-w-[250px] max-w-[250px] sm:w-[250px] hover:cursor-pointer hover:border hover:shadow-lg hover:rounded-lg border-[1px] border-gray-400 rounded-lg flex flex-col bg-white'>
@@ -272,7 +272,7 @@ function Events() {
                         {<CreateEvent setOpen={setCreate} fetchData={showAllEventOfCreator} />}
                     </div>
                     : isNotApprovedEvent.length > 0 ? (
-                        <div className='flex sm:flex-row sm:flex-wrap sm:space-x-2 sm:gap-2 overflow-x-auto sm:overflow-x-hidden space-x-4 p-2 animate-fade-in'>
+                        <div className='overflow-x-auto flex sm:flex-wrap sm:space-x-0 sm:gap-2 space-x-4 animate-fade-in'>
                             {isNotApprovedEvent.map(item => (
                                 <div key={item.id} onClick={(e) => handleClickToEvent(e, item.id)}
                                     className='max-h-[360px] h-[360px] sm:w-[250px] min-w-[250px] max-w-[250px] hover:cursor-pointer hover:border hover:shadow-lg hover:rounded-lg border-[1px] border-gray-400 rounded-lg flex flex-col  bg-white mx-2'>

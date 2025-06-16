@@ -1,7 +1,9 @@
 import React from "react"
 
+import avatarIcon from '../assets/avatar-icon.png'
+
 const ParticipantDetail = ({ onClose, dataParticipant, approve }) => {
-    
+
     const formatDate = (dateStr) => {
         return new Intl.DateTimeFormat("fr-FR", {
             day: "numeric",
@@ -19,8 +21,11 @@ const ParticipantDetail = ({ onClose, dataParticipant, approve }) => {
                 {/* Photo */}
                 <div className="flex justify-center mb-4">
                     <img
-                        src={dataParticipant.photo}
-                        alt="Participant"
+                        alt=""
+                        src={dataParticipant.photo !== null ? dataParticipant.photo : avatarIcon}
+                        onError={(e) => {
+                            e.target.src = avatarIcon;
+                        }}
                         className="w-24 h-24 object-cover rounded-full border-2 border-gray-300"
                     />
                 </div>
@@ -100,7 +105,7 @@ const ParticipantDetail = ({ onClose, dataParticipant, approve }) => {
 
                 <div className="mt-6 flex justify-end space-x-2">
                     <button
-                        onClick={()=>approve(dataParticipant?.id)}
+                        onClick={() => approve(dataParticipant?.id)}
                         className="text-xs sm:text-sm border border-1 py-2 px-2 drop-shadow-xl text-white font-semibold rounded-lg shadow-md hover:bg-green-500 bg-green-700"
                     >
                         Approuver

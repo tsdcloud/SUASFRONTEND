@@ -44,7 +44,7 @@ function Participant({
         <div className='p-2 flex bg-gray-100 rounded-lg space-x-2 items-center shadow-md'>
             {/* Profile picture */}
             <div className='w-[50px] max-w-[50px] h-[50px] max-h-[50px]'>
-                <img src={avatar !== null ? avatar : ""} alt="" className='flex justify-center items-center rounded-full' onError={(e) => { e.target.src = avatarIcon }} />
+                <img src={avatar !== null ? avatar : ""} alt="" className='w-full h-full object-cover rounded-full' onError={(e) => { e.target.src = avatarIcon }} />
             </div>
 
             {/* Information */}

@@ -44,7 +44,7 @@ const ChatBubble = ({ message, scrollProp, userInfo }) => {
               // src={avatarIcon} 
               src={message?.sender.avatar !== null ? message?.sender.avatar : ""}
               alt=''
-              className='flex justify-center items-center rounded-full'
+              className='w-full h-full object-cover rounded-full'
               onError={(e) => { e.target.src = avatarIcon }}
             />
           </div>
@@ -67,7 +67,7 @@ const ChatBubble = ({ message, scrollProp, userInfo }) => {
             // src={avatarIcon}
             src={message?.sender.avatar !== null ? message?.sender.avatar : ""}
             alt=''
-            className="w-10 h-10 rounded-full mr-2"
+            className="w-10 h-10 object-cover rounded-full mr-2"
             onError={(e) => { e.target.src = avatarIcon }}
           />
         )}
@@ -89,7 +89,7 @@ const ChatBubble = ({ message, scrollProp, userInfo }) => {
             // src={avatarIcon}
             src={message?.sender.avatar !== null ? message.sender?.avatar : ""}
             alt=''
-            className="w-10 h-10 rounded-full ml-2"
+            className="w-10 h-10 object-cover rounded-full ml-2"
             onError={(e) => { e.target.src = avatarIcon }}
           />
         )}

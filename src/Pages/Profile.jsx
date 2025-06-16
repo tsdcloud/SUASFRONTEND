@@ -3,8 +3,7 @@ import { AUTHCONTEXT } from '../context/AuthProvider'
 import { EyeSlashIcon, EyeIcon } from "@heroicons/react/24/outline";
 import { Button, Modal } from 'antd';
 import toast, { Toaster } from 'react-hot-toast';
-import Header from '../Components/Header'
-import Footer from '../Components/Footer'
+import { useFetch } from "../hooks/useFetch";
 
 import avatar from '../assets/avatar-icon.png'
 import { EnvelopeIcon, IdentificationIcon, PhoneIcon, UserCircleIcon, UserIcon } from '@heroicons/react/16/solid';
@@ -12,15 +11,20 @@ import { EnvelopeIcon, IdentificationIcon, PhoneIcon, UserCircleIcon, UserIcon }
 function Profile() {
   document.title = "Mon profil";
   const { userData, setUser, isAuth } = useContext(AUTHCONTEXT)
+  const { handlePostFile } = useFetch();
 
   const [showPassword, setShowPassword] = useState(false)
+  const [showOldPassword, setShowOldPassword] = useState(false)
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [infoUser, setInfoUser] = useState(userData)
+
+  const [files, setFiles] = useState([]);
+
+  const [infoUser, setInfoUser] = useState({})
+
   const [gender, setGender] = useState();
   const [checkPassword, setCheckPassword] = useState()
   const [newPassword, setNewPassword] = useState()
-  const [editInfoUser, setEditInfoUser] = useState({})
 
   useEffect(() => {
     return () => {
@@ -28,9 +32,131 @@ function Profile() {
     }
   }, [])
 
+  const handleSubmitFiles = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFiles([file]);
+    }
+  };
+
+  function updateLocalStorage(key, newValue) {
+    localStorage.setItem(key, JSON.stringify(newValue));
+  }
+
+  const handlePatch = async (url, data) => {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+
+      return await response.json();
+    } catch (error) {
+      console.error("Erreur PATCH:", error);
+      throw error;
+    }
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault()
+    const url = `${import.meta.env.VITE_EVENTS_API}/users/${userData?.id}`
+    const urlFile = `${import.meta.env.VITE_EVENTS_API}/files/upload`;
+
+    let imageUrl
+
+    if (newPassword) {
+      if (checkPassword !== newPassword) return toast.error('Les deux mots de passes doivent être identiques', { duration: 3000 })
+    }
+
+    // Upload de l'image
+
+    if (files.length !== 0) {
+      const imageRes = await handlePostFile(urlFile, files[0]);
+
+      if (!imageRes.success) {
+        toast.error(imageRes.message, { duration: 5000 });
+        return;
+      }
+
+      imageUrl = imageRes.result[0].url;
+    }
+
+
+    let data = { ...infoUser, photo: imageUrl };
+
+    if (!data.username) delete data.username
+
+    if (!data.email) delete data.email
+
+    if (!data.name) delete data.name
+
+    if (!data.phone) delete data.phone
+
+    if (!data.gender) delete data.gender
+
+    if (!data.surname) delete data.surname
+
+    if (!data.photo) delete data.photo
+
+    console.log("data", data);
+
+    try {
+      setConfirmLoading(true)
+      const res = await handlePatch(url, data);
+
+      console.log(res, "res");
+
+
+      if (res.success) {
+        toast.success(res.message, { duration: 2000 })
+
+        updateLocalStorage("userData", res.result)
+
+        setTimeout(() => {
+          // setOpen(false);
+          setConfirmLoading(false);
+
+          window.location.reload();
+        }, 2000);
+
+      }
+      else {
+        toast.error(res.message, { duration: 5000 });
+        setConfirmLoading(false);
+      }
+    }
+    catch (error) {
+      toast.error("Une erreur est survenue", { duration: 5000 });
+      //   console.log("erreur");
+
+    }
+    finally {
+      setConfirmLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    setInfoUser({
+      username: userData?.username,
+      email: userData?.email,
+      name: userData?.name,
+      phone: userData?.phone,
+      gender: userData?.gender,
+      surname: userData?.surname,
+      photo: userData?.photo
+    })
+  }, [userData])
+
+  console.log("infoUser", infoUser);
+
   const handleChangeGender = (e) => {
     setGender(e.target.value);
-    setEditInfoUser({ ...infoUser, gender: e.target.value })
+    setInfoUser({ ...infoUser, gender: e.target.value })
   }
 
   const showModal = () => {
@@ -40,15 +166,6 @@ function Profile() {
   const handleCancel = () => {
     setOpen(false);
   };
-
-
-  const handleUpdateUser = () => {
-    setConfirmLoading(true);
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
-  }
 
   return (
     <>
@@ -62,7 +179,7 @@ function Profile() {
         >
           <div className="p-1 bg-white max-w-2xl mx-auto">
 
-            <form onSubmit={handleUpdateUser} className="space-y-6">
+            <form onSubmit={handleUpdate} className="space-y-6">
 
               {/* Informations personnelles */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -73,7 +190,7 @@ function Profile() {
                     type="text"
                     id="name"
                     value={infoUser.name}
-                    onChange={(e) => setEditInfoUser({ ...infoUser, name: e.target.value })}
+                    onChange={(e) => setInfoUser({ ...infoUser, name: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
@@ -85,7 +202,7 @@ function Profile() {
                     type="text"
                     id="surname"
                     value={infoUser.surname}
-                    onChange={(e) => setEditInfoUser({ ...infoUser, surname: e.target.value })}
+                    onChange={(e) => setInfoUser({ ...infoUser, surname: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
@@ -95,10 +212,17 @@ function Profile() {
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Adresse mail</label>
                   <input
                     type="email"
-                    id="email"
+                    id="courriel"
                     value={infoUser.email}
-                    onChange={(e) => setEditInfoUser({ ...infoUser, email: e.target.value })}
+                    onChange={(e) => setInfoUser({ ...infoUser, email: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  {/* Champ piège (caché) */}
+                  <input
+                    type="text"
+                    name="email"
+                    autoComplete="username"
+                    style={{ display: 'none' }}
                   />
                 </div>
 
@@ -106,10 +230,10 @@ function Profile() {
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Téléphone</label>
                   <input
-                    type="tel"
+                    type="number"
                     id="phone"
                     value={infoUser.phone}
-                    onChange={(e) => setEditInfoUser({ ...infoUser, phone: e.target.value })}
+                    onChange={(e) => setInfoUser({ ...infoUser, phone: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
@@ -124,7 +248,7 @@ function Profile() {
                       type="radio"
                       name="gender"
                       value="MALE"
-                      checked={gender === 'MALE'}
+                      checked={infoUser.gender === 'MALE'}
                       onChange={handleChangeGender}
                       className="text-green-600 focus:ring-green-500"
                     />
@@ -135,7 +259,7 @@ function Profile() {
                       type="radio"
                       name="gender"
                       value="FEMALE"
-                      checked={gender === 'FEMALE'}
+                      checked={infoUser.gender === 'FEMALE'}
                       onChange={handleChangeGender}
                       className="text-green-600 focus:ring-green-500"
                     />
@@ -150,6 +274,8 @@ function Profile() {
                 <input
                   type="file"
                   id="file"
+                  accept="image/*"
+                  onChange={handleSubmitFiles}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                 // value={infoUser.photo[0]} onChange={(e) => setEditInfoUser({...infoUser, photo: e.target.files})}
                 />
@@ -157,15 +283,24 @@ function Profile() {
 
               {/* Mot de passe */}
               <div className="pt-4 space-y-4">
-                <div>
+                <div className="relative">
                   <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700 mb-1">Ancien mot de passe</label>
-                  <input
-                    type="password"
-                    id="oldPassword"
-                    value={checkPassword}
-                    onChange={(e) => setCheckPassword(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  />
+                  <div className="flex items-center">
+                    <input
+                      type={showOldPassword ? "text" : "password"}
+                      id="oldPassword"
+                      value={checkPassword}
+                      onChange={(e) => setCheckPassword(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowOldPassword(prev => !prev)}
+                      className="absolute right-3 text-gray-500"
+                    >
+                      {showOldPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="relative">
@@ -174,6 +309,8 @@ function Profile() {
                     <input
                       type={showPassword ? "text" : "password"}
                       id="password"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
                       className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                     <button
@@ -217,23 +354,23 @@ function Profile() {
                   {/* Nom d'utilisateur */}
                   <div className="flex items-center gap-3">
                     <span className="text-gray-500 w-8">
-                      <UserIcon class="h-6 w-6 text-gray-500" />
+                      <UserIcon className="h-6 w-6 text-gray-500" />
                     </span>
                     <div className="flex-1">
-                      <label className="block text-xs text-gray-500">Nom d'utilisateur</label>
-                      <p className="font-medium text-gray-900">{userData.username ? userData.username : "non defini"}</p>
+                      <label className="block text-xs text-gray-500">Nom</label>
+                      <p className="font-medium text-gray-900">{userData.name ? userData.name : "non defini"}</p>
                     </div>
                   </div>
 
                   {/* Nom & Prénom */}
                   <div className="flex items-center gap-3">
                     <span className="text-gray-500 w-8">
-                      <UserIcon class="h-6 w-6 text-gray-500" />
+                      <UserIcon className="h-6 w-6 text-gray-500" />
                     </span>
                     <div className="flex-1">
-                      <label className="block text-xs text-gray-500">Nom complet</label>
+                      <label className="block text-xs text-gray-500">Prénom</label>
                       <p className="font-medium text-gray-900">
-                        {userData.name} {userData.surname ? userData.surname : ""}
+                        {userData.surname ? userData.surname : "Non défini"}
                       </p>
                     </div>
                   </div>
@@ -241,7 +378,7 @@ function Profile() {
                   {/* Sexe */}
                   <div className="flex items-center gap-3">
                     <span className="text-gray-500 w-8">
-                      <IdentificationIcon class="h-6 w-6 text-gray-500" />
+                      <IdentificationIcon className="h-6 w-6 text-gray-500" />
                     </span>
                     <div className="flex-1">
                       <label className="block text-xs text-gray-500">Sexe</label>
@@ -252,7 +389,7 @@ function Profile() {
                   {/* Téléphone */}
                   <div className="flex items-center gap-3">
                     <span className="text-gray-500 w-8">
-                      <PhoneIcon class="h-6 w-6 text-gray-500" />
+                      <PhoneIcon className="h-6 w-6 text-gray-500" />
                     </span>
                     <div className="flex-1">
                       <label className="block text-xs text-gray-500">Téléphone</label>
@@ -263,7 +400,7 @@ function Profile() {
                   {/* Email */}
                   <div className="flex items-center gap-3">
                     <span className="text-gray-500 w-8">
-                      <EnvelopeIcon class="h-6 w-6 text-gray-500" />
+                      <EnvelopeIcon className="h-6 w-6 text-gray-500" />
                     </span>
                     <div className="flex-1">
                       <label className="block text-xs text-gray-500">Email</label>
@@ -288,14 +425,14 @@ function Profile() {
             )}
 
             {/* Bouton Modifier */}
-            {/* <div className='flex justify-center w-full'>
+            <div className='flex justify-center w-full'>
               <button
                 onClick={showModal}
                 className="mt-6 py-2 px-2 bg-green-600 hover:bg-green-700 text-white text-xs sm:text-sm rounded-lg shadow-sm transition-colors focus:outline-none"
               >
                 Modifier
               </button>
-            </div> */}
+            </div>
           </div>
         </div>
       </div>

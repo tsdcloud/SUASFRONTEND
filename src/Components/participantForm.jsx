@@ -30,7 +30,7 @@ export default function ParticipantForm({ onSubmit, workshopData }) {
   const [positionInCompany, setPositionInCompany] = useState("");
   const [description, setDescription] = useState("");
 
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState("");
   const [filePreview, setFilePreview] = useState(null);
 
   const inputImageRef = useRef();
@@ -166,9 +166,9 @@ export default function ParticipantForm({ onSubmit, workshopData }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // setConfirmLoading(true)
 
     const urlFile = `${import.meta.env.VITE_EVENTS_API}/files/upload`;
+
     let imageUrl;
 
     // Upload de l'image
@@ -184,6 +184,7 @@ export default function ParticipantForm({ onSubmit, workshopData }) {
 
     if (!functionC || files.length === 0 || !name || !surname || !description || !businessSector || !companyName) return toast.error("tout les champs sont réquis", { duration: 3000 });
 
+    setConfirmLoading(true)
 
     const data = {
       workshopId: id,
@@ -200,12 +201,15 @@ export default function ParticipantForm({ onSubmit, workshopData }) {
       photo: imageUrl
     }
 
-    console.log("test");
+    // console.log("test");
 
 
     try {
       const urlParticipant = `${import.meta.env.VITE_EVENTS_API}/participants/create`;
       const response = await handlePost(urlParticipant, data);
+
+      const fileInput = document.getElementById('fileInput');
+
       if (response.success) {
         setUser("");
         setRole("");
@@ -214,18 +218,25 @@ export default function ParticipantForm({ onSubmit, workshopData }) {
         setBusinessSector("");
         setCompanyName("");
         setFilePreview("");
-        setFiles([]);
-        setSurname("")
-        created()
-        return
+        setFiles("");
+        setSurname("");
+        setFunctionC("");
+
+        fileInput.value = '';
+
+        created();
+
+        // return
+      } else {
+        toast.error(response.message, { duration: 5000 });
+        setConfirmLoading(false);
       }
-      toast.error("Echec de creation", { duration: 5000 });
     } catch (err) {
       console.log(err);
       toast.error("Une erreur est survenu", { duration: 5000 });
     }
     finally {
-      // setConfirmLoading(false);
+      setConfirmLoading(false);
     }
   }
 
@@ -259,6 +270,7 @@ export default function ParticipantForm({ onSubmit, workshopData }) {
           <div className="flex flex-col">
             <label htmlFor="">Choisir l'utilisateur :</label>
             <select className={`w-full border-2 p-2 outline-none rounded-md ${usersIsLoading && "cursor-not-allowed"}`} value={user} onChange={e => setUser(e.target.value)} disabled={usersIsLoading}>
+              <option value="">-- Sélectionnez un utilisateur --</option>
               {
                 users.map(user => <option className='uppercase' key={user?.id} value={user?.id}>{user?.name}</option>)
               }
@@ -319,13 +331,14 @@ export default function ParticipantForm({ onSubmit, workshopData }) {
             type="file"
             accept="image/*"
             onChange={handleSubmitFiles}
+            id="fileInput"
             ref={inputImageRef}
             className="border font-sans border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-green-400 focus:outline-none"
             required
           />
-          {filePreview && (
+          {/* {filePreview && (
             <img src={filePreview} alt="Aperçu" className="mt-2 h-32 object-cover rounded" />
-          )}
+          )} */}
         </div>
 
         <div className='flex flex-col space-y-2'>
@@ -334,7 +347,7 @@ export default function ParticipantForm({ onSubmit, workshopData }) {
         </div>
 
         <div className='flex justify-end'>
-          <button className={`${confirmLoading ? "bg-orange-400 cursor-not-allowed" : "bg-orange-600 hover:bg-orange-500"} text-white p-2 rounded-lg shadow-md border border-1 mt-2 drop-shadow-xl font-semibold`} disabled={confirmLoading}>{confirmLoading ? "Soumission encours..." : "Soumettre"}</button>
+          <button className={`${confirmLoading ? "bg-orange-400 cursor-not-allowed" : "bg-orange-500 hover:bg-orange-400"} text-white p-2 rounded-lg shadow-md border border-1 mt-2 drop-shadow-xl font-semibold`} disabled={confirmLoading}>{confirmLoading ? "Soumission encours..." : "Soumettre"}</button>
         </div>
       </form>
 

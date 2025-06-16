@@ -17,8 +17,8 @@ const QRCodeGenerator = ({ userData }) => {
   return (
     <div className="p-4">
       <div className="flex flex-col justify-center items-center">
-        <p>QR Code du participant</p>
-        <QRCodeSVG value={encodedUrl} />
+        {/* <p>QR Code du participant</p> */}
+        <QRCodeSVG value={encodedUrl} size={150}/>
         {/* <p className="mt-2 break-all">{encodedUrl}</p> */}
       </div>
     </div>

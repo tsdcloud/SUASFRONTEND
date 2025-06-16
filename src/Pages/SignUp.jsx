@@ -179,7 +179,7 @@ function SignUp() {
           navigateToSignIn('/signin');
         }, 1500);
       } else {
-        toast.success(response.message, { duration: 5000 });
+        toast.error(response.message, { duration: 5000 });
       }
 
     } catch (error) {
