@@ -151,7 +151,7 @@ function CreateEvent({ setOpen, fetchData }) {
         // console.log("Check",imageUrl)
       }
       else {
-        toast.error(err, { duration: 5000 });
+        toast.error(res.message, { duration: 5000 });
         return;
       }
     }
@@ -216,10 +216,12 @@ function CreateEvent({ setOpen, fetchData }) {
 
       if (response.success) {
         validateCreatedEvent(response.result.id)
+      } else {
+        toast.error(response.message, { duration: 2000 });
       }
 
     } catch (error) {
-      toast.error("Echec de création de compte, veuillez réessayer", { duration: 2000 });
+      console.log("Echec de création de l'évènement, veuillez réessayer");
     }
     finally {
       setIsLoadingButton(false)

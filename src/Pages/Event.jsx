@@ -417,7 +417,8 @@ function Event() {
                   <ParticipantBadge
                     backgroundImage={evImg}
                     logoImage={evImg}
-                    participantName="Jean DUPONT"
+                    participantData={userData}
+                    eventData={event}
                     qrcode={<QRCodeGenerator userData={userData?.id} />}
                   />
                 </div>

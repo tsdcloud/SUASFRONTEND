@@ -802,11 +802,11 @@ function Workshop() {
 
 
                           {
-                            showWorkshop?.participants?.some(participant => participant?.ownerId === userData?.id) &&
-                            <div>
-                              <hr />
-                              <QRCodeGenerator userData={userData?.id} />
-                            </div>
+                            // showWorkshop?.participants?.some(participant => participant?.ownerId === userData?.id) &&
+                            // <div>
+                            //   <hr />
+                            //   <QRCodeGenerator userData={userData?.id} />
+                            // </div>
                           }
 
 

@@ -120,11 +120,14 @@ const CreateWorkshop = ({ onSuccess, idEvent, event }) => {
       const response = await handlePatch(url)
 
       if (response.success) {
-        toast.success("Atelier créé avec succès", { duration: 1000 });
+        toast.success("Atelier créé avec succès", { duration: 2000 });
         setTimeout(() => {
           onSuccess()
           emptyFormCreateWorkshop()
-        }, 1000);
+        }, 2000);
+      } else {
+        toast.error(response.message, { duration: 5000 });
+        return
       }
     }
     catch (error) {
@@ -208,7 +211,7 @@ const CreateWorkshop = ({ onSuccess, idEvent, event }) => {
       if (response?.success) {
         handleApproveWorkshop(response.result.id)
       } else {
-        toast.error(response.error || "Erreur lors de la création de l’atelier", { duration: 5000 });
+        toast.error(response.message || "Erreur lors de la création de l’atelier", { duration: 5000 });
       }
     } catch (error) {
       toast.error("Une erreur est survenue", { duration: 5000 });

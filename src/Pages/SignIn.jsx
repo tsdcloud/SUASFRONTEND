@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import { EyeSlashIcon, EyeIcon } from '@heroicons/react/24/outline';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useFetch } from '../hooks/useFetch';
 import toast, { Toaster } from 'react-hot-toast';
 import Preloader from '../Components/Preloader';
@@ -22,7 +22,16 @@ export default function SignIn() {
   const [errors, setErrors] = useState({});
   const userNameRef = useRef(null);
 
-  const navigateToHome = useNavigate();
+  const { id: idParam } = useParams();
+
+  function isValidUUID(uuid) {
+    const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return regex.test(uuid);
+  }
+
+  if(isValidUUID(idParam)) localStorage.setItem("eventId", idParam)
+
+  const navigateTo = useNavigate();
   const { handlePost } = useFetch();
 
   // Validation du formulaire
@@ -38,7 +47,7 @@ export default function SignIn() {
     if (!password) {
       newErrors.password = t("create_account_password_required");
       isValid = false;
-    } 
+    }
     // else if (password.length < 6) {
     //   newErrors.password = 'Le mot de passe doit faire au moins 6 caractères';
     //   isValid = false;
@@ -77,7 +86,13 @@ export default function SignIn() {
         setIsAuth(token);
         setUserData(userData);
 
-        navigateToHome('/');
+        let eventId = localStorage.getItem("eventId")
+        
+        if(eventId){
+          navigateTo(`/events/${eventId}`);
+        } else {
+          navigateTo('/');
+        }
       } else {
         toast.error(response.message, { duration: 5000 });
         return;
@@ -172,7 +187,7 @@ export default function SignIn() {
         <p className="text-xs ml-8 m-3">
           {t("no_account")}{' '}
           <Link to="/signup" className="text-[#104e45]">
-            {t("create_an_account")}  
+            {t("create_an_account")}
           </Link>
         </p>
       </div>

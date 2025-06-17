@@ -153,7 +153,7 @@ function CreateUser({ setOpen, fetchData }) {
 
       if (files.length > 0) {
         const res = await handlePostFile(urlFile, files[0]);
-        if (res?.error) {
+        if (!res.success) {
           toast.error(res.message || "Erreur lors de l'upload de l'image", { duration: 5000 });
           return;
         }
@@ -178,17 +178,17 @@ function CreateUser({ setOpen, fetchData }) {
       const url = `${import.meta.env.VITE_EVENTS_API}/users/register`;
       const response = await handlePost(url, data, false);
 
-      if (response?.error) {
-        toast.error(response.error, { duration: 5000 });
+      if (!response?.success) {
+        toast.error(response.message, { duration: 5000 });
         return;
       }
 
-      toast.success("Utilisateur créé avec succès.", { duration: 5000 });
+      toast.success("Utilisateur créé avec succès.", { duration: 2000 });
       setTimeout(() => {
         // navigateToSignIn('/signIn');
         setOpen(false)
         fetchData()
-      }, 1500);
+      }, 2000);
 
     } catch (error) {
       toast.error("Une erreur est survenue lors de la création de l'utilisateur.", { duration: 5000 });

@@ -62,17 +62,17 @@ const CreateUserRole = ({ setCreate, fetchData }) => {
             setIsLoading(true)
             const res = await handlePost(urlFile, data);
             if (res.success) {
-                toast.success("nouveau role créee avec succès", { duration: 1500 })
+                toast.success("nouveau role créee avec succès", { duration: 2000 })
                 setTimeout(() => {
                     // navigateTo('/categories');
                     setCreate(false)
                     fetchData()
-                }, 1500);
+                }, 2000);
 
                 // navigateTo("/categories")
             }
             else {
-                toast.error("une erreur est survenue...", { duration: 5000 });
+                toast.error(res.message, { duration: 5000 });
                 return;
             }
         }

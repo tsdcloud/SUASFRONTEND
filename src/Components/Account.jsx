@@ -49,6 +49,7 @@ export default function Account() {
     e.preventDefault();
     localStorage.removeItem("token");
     localStorage.removeItem("userData");
+    localStorage.removeItem("eventId");
     setUserData(null);
     setIsAuth(null);
     navigateToHome("/signin");
@@ -83,7 +84,7 @@ export default function Account() {
               <p className="text-sm">{t("connected_as")} {userData?.name}</p>
             </li>
             <li className="">
-              <p className="text-sm py-1 hover:bg-gray-100 border-gray-200"><Link to="/profile" className="hover:bg-gray-100">Mon profil</Link></p>
+              <Link to="/profile"><p className="text-sm py-1 hover:bg-gray-100 border-gray-200">Mon profil</p></Link>
             </li>
             <li className="">
               <p onClick={(e) => handleLogout(e)} className="text-sm text-red-500 py-1 hover:bg-gray-100 border-t border-gray-200">Se déconnecter</p>

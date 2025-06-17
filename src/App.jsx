@@ -75,6 +75,7 @@ function App() {
       <Routes>
         {/* Not protected routes */}
         <Route path='/signin' element={<SignIn />} exact />
+        <Route path='/signin/:id' element={<SignIn />} exact />
         <Route path='/signup' element={<SignUp />} exact />
         <Route path='/about-us' element={<AboutUs />} />
         <Route path='/' element={<HomePage />} />
