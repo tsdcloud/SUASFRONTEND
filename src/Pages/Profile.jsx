@@ -26,6 +26,8 @@ function Profile() {
   const [checkPassword, setCheckPassword] = useState()
   const [newPassword, setNewPassword] = useState()
 
+  const [changePassword, setChangePassword] = useState(false)
+
   useEffect(() => {
     return () => {
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -69,9 +71,6 @@ function Profile() {
 
     let imageUrl
 
-    if (newPassword) {
-      if (checkPassword !== newPassword) return toast.error('Les deux mots de passes doivent être identiques', { duration: 3000 })
-    }
 
     // Upload de l'image
 
@@ -103,6 +102,20 @@ function Profile() {
 
     if (!data.photo) delete data.photo
 
+    if (changePassword) {
+      if (!checkPassword) return toast.error('Veuillez renseigner le nouveau mot de passe', { duration: 3000 })
+
+      if (!newPassword) return toast.error('Veuillez renseigner le mot de passe de confirmation', { duration: 3000 })
+
+      if (checkPassword !== newPassword) return toast.error('Les deux mots de passes doivent être identiques', { duration: 3000 })
+
+      if (newPassword.length < 4) {
+        return toast.error("Le mot de passe doit contenir au moins 4 caractères.", { duration: 5000 });
+      }
+
+      data.password = newPassword
+    }
+
     console.log("data", data);
 
     try {
@@ -113,7 +126,7 @@ function Profile() {
 
 
       if (res.success) {
-        toast.success(res.message, { duration: 2000 })
+        toast.success("Informations mises a jour", { duration: 2000 })
 
         updateLocalStorage("userData", res.result)
 
@@ -132,11 +145,12 @@ function Profile() {
     }
     catch (error) {
       toast.error("Une erreur est survenue", { duration: 5000 });
+      setConfirmLoading(false)
       //   console.log("erreur");
 
     }
     finally {
-      setConfirmLoading(false)
+      // setConfirmLoading(false)
     }
   }
 
@@ -281,48 +295,64 @@ function Profile() {
                 />
               </div>
 
-              {/* Mot de passe */}
-              <div className="pt-4 space-y-4">
-                <div className="relative">
-                  <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700 mb-1">Ancien mot de passe</label>
-                  <div className="flex items-center">
-                    <input
-                      type={showOldPassword ? "text" : "password"}
-                      id="oldPassword"
-                      value={checkPassword}
-                      onChange={(e) => setCheckPassword(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowOldPassword(prev => !prev)}
-                      className="absolute right-3 text-gray-500"
-                    >
-                      {showOldPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="relative">
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Nouveau mot de passe</label>
-                  <div className="flex items-center">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      id="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(prev => !prev)}
-                      className="absolute right-3 text-gray-500"
-                    >
-                      {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-                    </button>
-                  </div>
-                </div>
+              <div className='flex items-center justify-center'>
+                {changePassword ?
+                  <button type="button" onClick={() => setChangePassword(false)} className="bg-red-500 px-2 py-2 sm:text-sm text-xs hover:bg-red-400 text-white rounded-md transition">
+                    annuler
+                  </button>
+                  :
+                  <button type="button" onClick={() => setChangePassword(true)} className='px-2 py-2 sm:text-sm text-xs bg-orange-500 hover:bg-orange-400 text-white rounded-md transition'>
+                    changer mot de passe
+                  </button>
+                }
               </div>
+
+
+              {/* Mot de passe */}
+              {changePassword &&
+                <div className="pt-4 space-y-4">
+                  <div className="relative">
+                    <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700 mb-1">Nouveau mot de passe</label>
+                    <div className="flex items-center">
+                      <input
+                        type={showOldPassword ? "text" : "password"}
+                        id="oldPassword"
+                        value={checkPassword}
+                        onChange={(e) => setCheckPassword(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowOldPassword(prev => !prev)}
+                        className="absolute right-3 text-gray-500"
+                      >
+                        {showOldPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                      </button>
+                    </div>
+                  </div>
+
+
+                  <div className="relative">
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Confirmez le mot de passe</label>
+                    <div className="flex items-center">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        id="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(prev => !prev)}
+                        className="absolute right-3 text-gray-500"
+                      >
+                        {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              }
 
               {/* Boutons */}
               <div className="flex justify-end space-x-3 mt-6">
@@ -333,12 +363,20 @@ function Profile() {
                 >
                   Annuler
                 </button>
+
                 <button
                   type="submit"
-                  className="px-2 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition"
+                  className={`${confirmLoading ? "bg-green-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"} py-2 px-2 text-white text-xs sm:text-sm rounded-md transition`}
                 >
-                  Enregistrer
+                  {confirmLoading ? "Enregistrement..." : "Enregistrer"}
                 </button>
+
+                {/* <button
+                  onClick={showModal}
+                  className={`${confirmLoading ? "bg-green-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"} mt-6 py-2 px-2 text-white text-xs sm:text-sm rounded-lg shadow-sm transition-colors focus:outline-none`}
+                >
+                  {confirmLoading ? "Modification..." : "Modifier"}
+                </button> */}
               </div>
             </form>
           </div>
