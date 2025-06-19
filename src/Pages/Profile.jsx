@@ -454,11 +454,11 @@ function Profile() {
                 {/* Photo de profil */}
                 <div className="pt-2 flex items-center gap-3">
                   {/* <span className="text-gray-500 w-8">&nbsp;</span> */}
-                  <div className="flex items-center gap-3 w-full">
+                  <div className="flex items-center gap-3">
                     <img
                       src={userData.photo !== null ? userData.photo : ""}
                       alt="Profil"
-                      className="w-full h-full sm:h-80 rounded-full object-cover border border-gray-200"
+                      className="md:h-80 rounded-full object-cover border border-gray-200"
                       onError={(e) => { e.target.src = avatar }}
                     />
                   </div>
