@@ -79,7 +79,7 @@ function SignUp() {
     }
 
     if (!/^\d{7,}$/.test(phoneNumber)) {
-      toast.success("Le téléphone doit contenir au moins 7 chiffres.", { duration: 5000 });
+      toast.error("Le téléphone doit contenir au moins 7 chiffres.", { duration: 5000 });
     }
 
     // if (!gender) {
@@ -106,7 +106,7 @@ function SignUp() {
         newErrors.password = t("create_account_password_required");
         isValid = false;
       } else if (password.length < 4) {
-        toast.success("Le mot de passe doit contenir au moins 4 caractères.", { duration: 5000 });
+        toast.error("Le mot de passe doit contenir au moins 4 caractères.", { duration: 5000 });
       }
 
       // Validation du mot de passe
