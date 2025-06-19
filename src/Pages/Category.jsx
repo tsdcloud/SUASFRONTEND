@@ -58,51 +58,45 @@ const Category = (props) => {
                     <Preloader className="w-[90px] h-[90px] sm:w-[100px] sm:h-[100px] lg:w-[120px] lg:h-[120px]" />
                     <p className='text-xs'>Chargement…</p>
                 </div>
-            ) : categories ? (
-
-                <div>
-                    {!create ?
-                        <div className="overflow-x-auto p-4 bg-gray-50 rounded-lg flex justify-center animate-fade-in">
-                            <div className="flex flex-col justify-center sm:flex-nowrap gap-4 pb-4 sm:grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6 w-full ">
-                                {categories.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className="max-w-xs w-full h-[220px] bg-white border border-gray-300 rounded-xl shadow-sm hover:shadow-xl hover:border-green-400 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
-                                    >
-                                        {/* Card Header - Image */}
-                                        <div className="relative h-3/5 w-full">
-                                            <div
-                                                className="absolute inset-0 bg-cover bg-center blur-sm opacity-80"
-                                                style={{ backgroundImage: `url(${catImg})` }}
-                                            ></div>
-                                            <img
-                                                src={catImg}
-                                                alt=""
-                                                className="relative z-10 object-cover h-full w-full"
-                                            />
-                                        </div>
-
-                                        {/* Card Body - Text */}
-                                        <div className="p-4 space-y-2 bg-white">
-                                            <p className="text-green-900 text-sm    ">
-                                                Numéro de référence : {item.referenceNumber}
-                                            </p>
-                                            <p className="text-green-900 font-semibold truncate">
-                                                Catégorie : {item.name}
-                                            </p>
-                                        </div>
+            ) : create ?
+                <CreateCategory setCreate={setCreate} fetchData={fetchCategories} />
+                :
+                categories.length !== 0 ?
+                    <div className="overflow-x-auto p-4 flex justify-center animate-fade-in">
+                        <div className="flex flex-col justify-center sm:flex-nowrap gap-4 pb-4 sm:grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 sm:gap-6 w-full ">
+                            {categories.map((item) => (
+                                <div
+                                    key={item.id}
+                                    className="max-w-xs w-full h-[220px] bg-white border border-gray-300 rounded-xl shadow-sm hover:shadow-xl hover:border-green-400 transition-all duration-300 transform hover:-translate-y-1 overflow-hidden pb-2"
+                                >
+                                    {/* Card Header - Image */}
+                                    <div className="relative h-3/5 w-full">
+                                        <div
+                                            className="absolute inset-0 bg-cover bg-center blur-sm opacity-80"
+                                            style={{ backgroundImage: `url(${catImg})` }}
+                                        ></div>
+                                        <img
+                                            src={catImg}
+                                            alt=""
+                                            className="relative z-10 object-cover h-full w-full"
+                                        />
                                     </div>
-                                ))}
-                            </div>
+
+                                    {/* Card Body - Text */}
+                                    <div className="p-4 space-y-2 bg-white">
+                                        <p className="text-green-900 text-sm    ">
+                                            Numéro de référence : {item.referenceNumber}
+                                        </p>
+                                        <p className="text-green-900 font-semibold truncate">
+                                            Catégorie : {item.name}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
-                        :
-                        <CreateCategory setCreate={setCreate} fetchData={fetchCategories} />}
-
-                </div>
-
-            ) : (
-                <p className='text-gray-500 text-center text-sm'>Aucune catégorie.</p>
-            ),
+                    </div>
+                    :
+                    <p className='text-gray-500 text-center text-sm'>Aucune catégorie.</p>
         },
     ];
 
