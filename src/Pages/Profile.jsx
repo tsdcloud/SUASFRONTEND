@@ -6,7 +6,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useFetch } from "../hooks/useFetch";
 
 import avatar from '../assets/avatar-icon.png'
-import { EnvelopeIcon, IdentificationIcon, PhoneIcon, UserCircleIcon, UserIcon } from '@heroicons/react/16/solid';
+import { EnvelopeIcon, ExclamationCircleIcon, IdentificationIcon, PhoneIcon, UserCircleIcon, UserIcon } from '@heroicons/react/16/solid';
 
 function Profile() {
   document.title = "Mon profil";
@@ -350,6 +350,10 @@ function Profile() {
                         {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
                       </button>
                     </div>
+                  </div>
+                  <div className='flex items-center space-x-1 justify-center text-red-500 text-xs'>
+                    <ExclamationCircleIcon class="h-4 w-4" />
+                    <div>Ce nouveau mot de passe sera utiliser lors de votre prochaine connexion</div>
                   </div>
                 </div>
               }
