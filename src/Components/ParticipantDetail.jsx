@@ -60,13 +60,13 @@ const ParticipantDetail = ({ onClose, dataParticipant, approve }) => {
                         <h3 className="font-semibold text-gray-600">Numéro de référence</h3>
                         <p>{dataParticipant.referenceNumber || "Non renseigné"}</p>
                     </div>
-                    <div>
+                    {/* <div>
                         <h3 className="font-semibold text-gray-600">ID Participant</h3>
                         <p className="text-xs">{dataParticipant.id}</p>
-                    </div>
+                    </div> */}
                     <div>
-                        <h3 className="font-semibold text-gray-600">ID Rôle</h3>
-                        <p className="text-xs">{dataParticipant.participantRoleId}</p>
+                        <h3 className="font-semibold text-gray-600">Rôle</h3>
+                        <p className="text-xs">{dataParticipant.participantRole.name}</p>
                     </div>
                     <div>
                         <h3 className="font-semibold text-gray-600">Type de participation</h3>
