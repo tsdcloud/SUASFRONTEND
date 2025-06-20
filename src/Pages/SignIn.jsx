@@ -29,7 +29,7 @@ export default function SignIn() {
     return regex.test(uuid);
   }
 
-  if(isValidUUID(idParam)) localStorage.setItem("eventId", idParam)
+  if (isValidUUID(idParam)) localStorage.setItem("eventId", idParam)
 
   const navigateTo = useNavigate();
   const { handlePost } = useFetch();
@@ -87,8 +87,8 @@ export default function SignIn() {
         setUserData(userData);
 
         let eventId = localStorage.getItem("eventId")
-        
-        if(eventId){
+
+        if (eventId) {
           navigateTo(`/events/${eventId}`);
         } else {
           navigateTo('/');
@@ -184,12 +184,16 @@ export default function SignIn() {
           </button>
         </form>
 
-        <p className="text-xs ml-8 m-3">
-          {t("no_account")}{' '}
+        <div className="text-xs ml-8 m-3">
+          {/* {t("no_account")}{' '} */}
           <Link to="/signup" className="text-[#104e45]">
             {t("create_an_account")}
           </Link>
-        </p>
+          <span className='px-2'>|</span>
+          <Link to="/forgotPassword" className="text-[#104e45]">
+            {t("forgot_password")}
+          </Link>
+        </div>
       </div>
     </LogoutLayout>
   );

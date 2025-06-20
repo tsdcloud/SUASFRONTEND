@@ -177,7 +177,7 @@ function SignUp() {
         toast.success(t("create_account_created_success"), { duration: 5000 });
         setTimeout(() => {
           navigateToSignIn('/signin');
-        }, 1500);
+        }, 2000);
       } else {
         toast.error(response.message, { duration: 5000 });
       }

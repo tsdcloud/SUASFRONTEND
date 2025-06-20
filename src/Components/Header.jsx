@@ -91,7 +91,13 @@ function Header({ switchLanguage }) {
         </div>
       </div>
     )
-  } else if (!pathName.includes("room")){
+  } else if (pathName.includes("room")){
+    return 
+
+  } else if(pathName.includes("resetPassword") || pathName.includes("resetpassword") || pathName.includes("forgotPassword") || pathName.includes("forgotpassword")) {
+    return 
+    
+  } else {
     return (
       <div className='bg-primary sticky w-full top-0 z-10 flex shadow-xl h-[60px] text-sm gap-5 justify-between 
         items-center sm:px-10 px-4 max-md:flex-wrap max-md:max-w-full'>
@@ -102,28 +108,6 @@ function Header({ switchLanguage }) {
         </Link>
 
         <div className="flex gap-5 items-center max-md:flex-wrap max-md:max-w-full">
-
-          {/* <div className="relative" ref={componentRef}>
-            <button
-              onClick={toggleDropdownLang}
-              className="flex items-center text-gray-300"
-            >
-              {<span className='text-bold'>{lang === "en" ? "EN" : "FR"}</span>} <ChevronDownIcon className={`w-5 h-5 ml-1 transition-transform ${isOpen ? 'rotate-180' : 'rotate-0'}`} />
-            </button>
-            {isOpen && (
-              <div className="absolute top-full mt-2 w-12 bg-white border border-gray-300 rounded shadow-lg  animate-fade-in">
-                {["en", "fr"].map((lng) => (
-                  <button
-                    key={lng}
-                    className="block w-full px-2 py-2 text-sm  hover:bg-gray-100"
-                    onClick={() => changeLanguage(lng)}
-                  >
-                    {lng.toUpperCase()}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div> */}
 
           {
             token ?
@@ -140,7 +124,6 @@ function Header({ switchLanguage }) {
         </div>
       </div>
     )
-
   }
 
 }

@@ -25,6 +25,8 @@ import Header from './Components/Header'
 
 import { useTranslation } from "react-i18next";
 import EventRole from './Pages/EventRole'
+import ResetPassword from './Pages/ResetPassword'
+import ForgotPassword from './Pages/ForgotPassword'
 
 function App() {
   const { i18n } = useTranslation();
@@ -78,8 +80,14 @@ function App() {
         <Route path='/signin/:id' element={<SignIn />} exact />
         <Route path='/signup' element={<SignUp />} exact />
         <Route path='/about-us' element={<AboutUs />} />
+
+        {/* forgot and reset password */}
+        <Route path='/forgotPassword' element={<ForgotPassword />} exact />
+        <Route path='/resetPassword/:token' element={<ResetPassword />} exact />
+
         <Route path='/' element={<HomePage />} />
         <Route path='*' element={<HomePage />} />
+
 
         {/* protected routes */}
         <Route element={<ProtectedRoutes />}>
